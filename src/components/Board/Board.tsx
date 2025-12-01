@@ -3,12 +3,14 @@
  *
  * Main communication board grid displaying buttons.
  * Supports keyboard navigation with arrow keys.
+ * Conditionally renders grid or freeform canvas based on board mode.
  */
 
 import { useCallback, useRef, useEffect, useState } from 'react';
-import type { ButtonWithMedia, GridLayout, LabelPosition } from '../../types';
-import { GRID_ARRANGEMENTS } from '../../types';
+import type { ButtonWithMedia, GridLayout, LabelPosition, BoardMode, Viewport } from '../../types';
+import { GRID_ARRANGEMENTS, DEFAULT_VIEWPORT, DEFAULT_CANVAS_CONFIG } from '../../types';
 import { BoardButton } from './BoardButton';
+import { BoardCanvas } from './BoardCanvas';
 import './Board.css';
 
 interface BoardProps {
@@ -23,6 +25,15 @@ interface BoardProps {
   progress?: number;
   // Label position for all buttons (003-button-text)
   labelPosition?: LabelPosition;
+  // Freeform board props (004-freeform-board)
+  mode?: BoardMode;
+  boardId?: string;
+  canvasWidth?: number;
+  canvasHeight?: number;
+  viewportZoom?: number;
+  viewportPanX?: number;
+  viewportPanY?: number;
+  onButtonsChange?: () => void;
 }
 
 export function Board({
@@ -35,7 +46,16 @@ export function Board({
   playingButtonId = null,
   progress = 0,
   labelPosition = 'below',
+  mode = 'grid',
+  boardId,
+  canvasWidth = DEFAULT_CANVAS_CONFIG.width,
+  canvasHeight = DEFAULT_CANVAS_CONFIG.height,
+  viewportZoom = DEFAULT_VIEWPORT.zoom,
+  viewportPanX = DEFAULT_VIEWPORT.panX,
+  viewportPanY = DEFAULT_VIEWPORT.panY,
+  onButtonsChange,
 }: BoardProps) {
+  // Grid mode state - hooks must be called unconditionally
   const [rows, cols] = GRID_ARRANGEMENTS[layout];
   const visibleButtons = buttons.slice(0, layout);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -93,12 +113,40 @@ export function Board({
     const grid = gridRef.current;
     if (!grid) return;
 
-    const buttons = grid.querySelectorAll<HTMLButtonElement>('.board-button');
-    if (buttons[focusedIndex]) {
-      buttons[focusedIndex].focus();
+    const gridButtons = grid.querySelectorAll<HTMLButtonElement>('.board-button');
+    if (gridButtons[focusedIndex]) {
+      gridButtons[focusedIndex].focus();
     }
   }, [focusedIndex]);
 
+  // Freeform mode - render BoardCanvas
+  if (mode === 'freeform' && boardId) {
+    const viewport: Viewport = {
+      zoom: viewportZoom,
+      panX: viewportPanX,
+      panY: viewportPanY,
+    };
+
+    return (
+      <BoardCanvas
+        buttons={buttons}
+        boardId={boardId}
+        canvasWidth={canvasWidth}
+        canvasHeight={canvasHeight}
+        initialViewport={viewport}
+        isEditing={isEditMode}
+        onButtonTap={onButtonTap}
+        onButtonSelect={onButtonSelect}
+        selectedButtonId={selectedButtonId}
+        labelPosition={labelPosition}
+        playingButtonId={playingButtonId}
+        progress={progress}
+        onButtonsChange={onButtonsChange}
+      />
+    );
+  }
+
+  // Grid mode - render grid layout
   return (
     <div
       ref={gridRef}
