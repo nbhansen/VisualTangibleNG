@@ -25,10 +25,10 @@
 
 **Purpose**: Type definitions and contract copying
 
-- [ ] T001 Add LabelPosition type ('above' | 'below' | 'hidden') to src/types/index.ts
-- [ ] T002 [P] Add MAX_LABEL_LENGTH constant (50) to src/types/index.ts
-- [ ] T003 [P] Copy isValidLabel function from contracts/labels.ts to src/types/index.ts
-- [ ] T004 [P] Copy normalizeLabel function from contracts/labels.ts to src/types/index.ts
+- [X] T001 Add LabelPosition type ('above' | 'below' | 'hidden') to src/types/index.ts
+- [X] T002 [P] Add MAX_LABEL_LENGTH constant (50) to src/types/index.ts
+- [X] T003 [P] Copy isValidLabel function from contracts/labels.ts to src/types/index.ts
+- [X] T004 [P] Copy normalizeLabel function from contracts/labels.ts to src/types/index.ts
 
 ---
 
@@ -38,13 +38,13 @@
 
 **CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 Add label field (string | null) to Button interface in src/types/index.ts
-- [ ] T006 Add labelPosition field (LabelPosition) to Board interface in src/types/index.ts
-- [ ] T007 Increment DB_VERSION from 1 to 2 in src/services/storage/db.ts
-- [ ] T008 Add migration logic for v1→v2 to set default labelPosition='below' on existing boards in db.ts
-- [ ] T009 Implement updateButtonLabel method in src/services/storage/StorageService.ts
-- [ ] T010 Implement updateBoardLabelPosition method in StorageService.ts
-- [ ] T011 Update getBoardWithButtons to include label field in returned buttons in StorageService.ts
+- [X] T005 Add label field (string | null) to Button interface in src/types/index.ts
+- [X] T006 Add labelPosition field (LabelPosition) to Board interface in src/types/index.ts
+- [X] T007 Increment DB_VERSION from 1 to 2 in src/services/storage/db.ts
+- [X] T008 Add migration logic for v1→v2 to set default labelPosition='below' on existing boards in db.ts
+- [X] T009 Implement updateButtonLabel method in src/services/storage/StorageService.ts
+- [X] T010 Implement updateBoardLabelPosition method in StorageService.ts
+- [X] T011 Update getBoardWithButtons to include label field in returned buttons in StorageService.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -58,18 +58,18 @@
 
 ### Implementation for User Story 1
 
-- [ ] T012 [US1] Add label prop to BoardButton component in src/components/Board/BoardButton.tsx
-- [ ] T013 [US1] Add labelPosition prop to BoardButton component in BoardButton.tsx
-- [ ] T014 [US1] Render label span element when label is non-null and position is not 'hidden' in BoardButton.tsx
-- [ ] T015 [P] [US1] Add .button-label CSS styles with system font stack in src/components/Board/BoardButton.css
-- [ ] T016 [P] [US1] Add responsive font sizing with clamp() in BoardButton.css
-- [ ] T017 [P] [US1] Add text truncation with -webkit-line-clamp (max 2 lines) in BoardButton.css
-- [ ] T018 [US1] Use flexbox with flex-direction to position label above or below in BoardButton.css
-- [ ] T019 [US1] Add data-label-position attribute for CSS styling in BoardButton.tsx
-- [ ] T020 [US1] Pass labelPosition from board to each BoardButton in src/components/Board/Board.tsx
-- [ ] T021 [US1] Add dir="auto" attribute to label for RTL support in BoardButton.tsx
-- [ ] T022 [P] [US1] Add high contrast mode styles for labels in BoardButton.css
-- [ ] T023 [US1] Ensure label is part of button's accessible name (aria-label) in BoardButton.tsx
+- [X] T012 [US1] Add label prop to BoardButton component in src/components/Board/BoardButton.tsx
+- [X] T013 [US1] Add labelPosition prop to BoardButton component in BoardButton.tsx
+- [X] T014 [US1] Render label span element when label is non-null and position is not 'hidden' in BoardButton.tsx
+- [X] T015 [P] [US1] Add .button-label CSS styles with system font stack in src/components/Board/BoardButton.css
+- [X] T016 [P] [US1] Add responsive font sizing with clamp() in BoardButton.css
+- [X] T017 [P] [US1] Add text truncation with -webkit-line-clamp (max 2 lines) in BoardButton.css
+- [X] T018 [US1] Use flexbox with flex-direction to position label above or below in BoardButton.css
+- [X] T019 [US1] Add data-label-position attribute for CSS styling in BoardButton.tsx
+- [X] T020 [US1] Pass labelPosition from board to each BoardButton in src/components/Board/Board.tsx
+- [X] T021 [US1] Add dir="auto" attribute to label for RTL support in BoardButton.tsx
+- [X] T022 [P] [US1] Add high contrast mode styles for labels in BoardButton.css
+- [X] T023 [US1] Ensure label is part of button's accessible name (aria-label) in BoardButton.tsx
 
 **Checkpoint**: User Story 1 complete - labels display on buttons
 
@@ -83,15 +83,15 @@
 
 ### Implementation for User Story 2
 
-- [ ] T024 [US2] Add label input field to ButtonEditor component in src/components/Editor/ButtonEditor.tsx
-- [ ] T025 [US2] Add local state for label value in ButtonEditor.tsx
-- [ ] T026 [US2] Initialize label state from button.label on mount in ButtonEditor.tsx
-- [ ] T027 [US2] Add maxLength={50} attribute to label input in ButtonEditor.tsx
-- [ ] T028 [P] [US2] Add character counter display showing {length}/50 in ButtonEditor.tsx
-- [ ] T029 [US2] Call normalizeLabel before saving to storage in ButtonEditor.tsx
-- [ ] T030 [US2] Call storageService.updateButtonLabel on save in ButtonEditor.tsx
-- [ ] T031 [P] [US2] Add label input styling in src/components/Editor/Editor.css
-- [ ] T032 [US2] Refresh board display after label save to show updated label
+- [X] T024 [US2] Add label input field to ButtonEditor component in src/components/Editor/ButtonEditor.tsx
+- [X] T025 [US2] Add local state for label value in ButtonEditor.tsx
+- [X] T026 [US2] Initialize label state from button.label on mount in ButtonEditor.tsx
+- [X] T027 [US2] Add maxLength={50} attribute to label input in ButtonEditor.tsx
+- [X] T028 [P] [US2] Add character counter display showing {length}/50 in ButtonEditor.tsx
+- [X] T029 [US2] Call normalizeLabel before saving to storage in ButtonEditor.tsx
+- [X] T030 [US2] Call storageService.updateButtonLabel on save in ButtonEditor.tsx
+- [X] T031 [P] [US2] Add label input styling in src/components/Editor/Editor.css
+- [X] T032 [US2] Refresh board display after label save to show updated label
 
 **Checkpoint**: User Story 2 complete - labels can be added and edited
 
@@ -105,13 +105,13 @@
 
 ### Implementation for User Story 3
 
-- [ ] T033 [US3] Create LabelPositionSelector component in src/components/Editor/LabelPositionSelector.tsx
-- [ ] T034 [US3] Add radio inputs for 'below', 'above', 'hidden' options in LabelPositionSelector.tsx
-- [ ] T035 [P] [US3] Add CSS styling for LabelPositionSelector in Editor.css
-- [ ] T036 [US3] Add LabelPositionSelector to EditMode settings section in src/components/EditMode.tsx
-- [ ] T037 [US3] Load current labelPosition from board in EditMode.tsx
-- [ ] T038 [US3] Call storageService.updateBoardLabelPosition on selection change
-- [ ] T039 [US3] Refresh board display after position change to update all buttons
+- [X] T033 [US3] Create LabelPositionSelector component in src/components/Editor/LabelPositionSelector.tsx
+- [X] T034 [US3] Add radio inputs for 'below', 'above', 'hidden' options in LabelPositionSelector.tsx
+- [X] T035 [P] [US3] Add CSS styling for LabelPositionSelector in Editor.css
+- [X] T036 [US3] Add LabelPositionSelector to EditMode settings section in src/components/EditMode.tsx
+- [X] T037 [US3] Load current labelPosition from board in EditMode.tsx
+- [X] T038 [US3] Call storageService.updateBoardLabelPosition on selection change
+- [X] T039 [US3] Refresh board display after position change to update all buttons
 
 **Checkpoint**: User Story 3 complete - label position can be configured
 
@@ -121,10 +121,10 @@
 
 **Purpose**: Final polish and edge case handling
 
-- [ ] T040 [P] Add larger font sizes for 1-2 button layouts in BoardButton.css
-- [ ] T041 [P] Add dark mode label color variables in BoardButton.css
-- [ ] T042 Handle undefined label as null in BoardButton (backwards compatibility)
-- [ ] T043 Handle undefined labelPosition as 'below' in Board (backwards compatibility)
+- [X] T040 [P] Add larger font sizes for 1-2 button layouts in BoardButton.css
+- [X] T041 [P] Add dark mode label color variables in BoardButton.css
+- [X] T042 Handle undefined label as null in BoardButton (backwards compatibility)
+- [X] T043 Handle undefined labelPosition as 'below' in Board (backwards compatibility)
 
 ---
 

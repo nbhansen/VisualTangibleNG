@@ -4,8 +4,9 @@
  * Edit panel for selected button - image and audio management.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { ButtonWithMedia } from '../../types';
+import { MAX_LABEL_LENGTH, normalizeLabel } from '../../types';
 import type { RecordingResult } from '../../types/audio';
 import { ImagePicker } from './ImagePicker';
 import { AudioRecorder } from './AudioRecorder';
@@ -21,7 +22,15 @@ interface ButtonEditorProps {
 export function ButtonEditor({ button, onUpdate }: ButtonEditorProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { saveImage, deleteImage, saveAudio, deleteAudio } = useStorage();
+  const { saveImage, deleteImage, saveAudio, deleteAudio, updateButtonLabel } = useStorage();
+
+  // Label state (003-button-text)
+  const [labelValue, setLabelValue] = useState(button.label ?? '');
+
+  // Update label state when button changes (003-button-text)
+  useEffect(() => {
+    setLabelValue(button.label ?? '');
+  }, [button.id, button.label]);
 
   const handleImageSelected = useCallback(
     async (file: File) => {
@@ -135,6 +144,28 @@ export function ButtonEditor({ button, onUpdate }: ButtonEditorProps) {
     }
   }, [button, deleteAudio, onUpdate]);
 
+  // Handle label save (003-button-text)
+  const handleLabelSave = useCallback(async () => {
+    const normalized = normalizeLabel(labelValue);
+    if (normalized === button.label) return; // No change
+
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      await updateButtonLabel(button.id, normalized);
+
+      onUpdate({
+        ...button,
+        label: normalized,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save label');
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [button, labelValue, updateButtonLabel, onUpdate]);
+
   return (
     <div className="button-editor">
       <h2 className="button-editor__title">Button {button.position + 1}</h2>
@@ -144,6 +175,26 @@ export function ButtonEditor({ button, onUpdate }: ButtonEditorProps) {
           {error}
         </p>
       )}
+
+      {/* Label Section (003-button-text) */}
+      <section className="button-editor__section">
+        <h3>Label</h3>
+        <div className="button-editor__label-input-wrapper">
+          <input
+            type="text"
+            value={labelValue}
+            onChange={(e) => setLabelValue(e.target.value)}
+            onBlur={handleLabelSave}
+            maxLength={MAX_LABEL_LENGTH}
+            placeholder="Enter button label..."
+            className="button-editor__label-input"
+            disabled={isProcessing}
+          />
+          <span className="button-editor__label-counter">
+            {labelValue.length}/{MAX_LABEL_LENGTH}
+          </span>
+        </div>
+      </section>
 
       {/* Image Section */}
       <section className="button-editor__section">

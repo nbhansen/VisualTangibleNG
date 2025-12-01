@@ -33,6 +33,7 @@ export function ViewMode() {
           buttons={board.buttons}
           layout={board.layout}
           onButtonTap={playButtonAudio}
+          labelPosition={board.labelPosition}
         />
       </main>
       <footer className="view-mode__footer">

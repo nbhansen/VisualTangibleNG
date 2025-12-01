@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getStorageService, StorageService } from '../services/storage';
-import type { BoardWithButtons, GridLayout, Image, Audio } from '../types';
+import type { BoardWithButtons, GridLayout, Image, Audio, LabelPosition } from '../types';
 
 interface UseStorageReturn {
   isInitialized: boolean;
@@ -29,6 +29,9 @@ interface UseStorageReturn {
   ) => Promise<Audio>;
   deleteAudio: (audioId: string) => Promise<void>;
   resetAllData: () => Promise<void>;
+  // Label operations (003-button-text)
+  updateButtonLabel: (buttonId: string, label: string | null) => Promise<void>;
+  updateBoardLabelPosition: (boardId: string, position: LabelPosition) => Promise<void>;
 }
 
 export function useStorage(): UseStorageReturn {
@@ -121,6 +124,22 @@ export function useStorage(): UseStorageReturn {
     await getService().resetAllData();
   }, [getService]);
 
+  // Update button label (003-button-text)
+  const updateButtonLabel = useCallback(
+    async (buttonId: string, label: string | null): Promise<void> => {
+      await getService().updateButtonLabel(buttonId, label);
+    },
+    [getService]
+  );
+
+  // Update board label position (003-button-text)
+  const updateBoardLabelPosition = useCallback(
+    async (boardId: string, position: LabelPosition): Promise<void> => {
+      await getService().updateBoardLabelPosition(boardId, position);
+    },
+    [getService]
+  );
+
   return {
     isInitialized,
     error,
@@ -131,5 +150,7 @@ export function useStorage(): UseStorageReturn {
     saveAudio,
     deleteAudio,
     resetAllData,
+    updateButtonLabel,
+    updateBoardLabelPosition,
   };
 }

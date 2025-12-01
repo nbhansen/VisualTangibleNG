@@ -6,7 +6,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { ButtonWithMedia } from '../../types';
+import type { ButtonWithMedia, LabelPosition } from '../../types';
 import './BoardButton.css';
 
 interface BoardButtonProps {
@@ -16,6 +16,9 @@ interface BoardButtonProps {
   isSelected?: boolean;
   onSelect?: () => void;
   tabIndex?: number;
+  // Label props (003-button-text)
+  label?: string | null;
+  labelPosition?: LabelPosition;
 }
 
 export function BoardButton({
@@ -25,6 +28,8 @@ export function BoardButton({
   isSelected = false,
   onSelect,
   tabIndex = 0,
+  label,
+  labelPosition = 'below',
 }: BoardButtonProps) {
   const [isActive, setIsActive] = useState(false);
 
@@ -41,33 +46,50 @@ export function BoardButton({
 
   const hasContent = button.imageUrl || button.audioBuffer;
 
+  // Resolve label from prop or button.label (003-button-text)
+  const displayLabel = label !== undefined ? label : (button.label ?? null);
+  const showLabel = displayLabel && labelPosition !== 'hidden';
+
+  // Build accessible name including label if present (003-button-text)
+  const accessibleName = displayLabel
+    ? `${displayLabel}${button.audioBuffer ? ' - tap to play' : ''}`
+    : hasContent
+      ? `Button ${button.position + 1}${button.audioBuffer ? ' - tap to play' : ''}`
+      : `Empty button ${button.position + 1}`;
+
   return (
     <button
       type="button"
       className={`board-button ${isActive ? 'board-button--active' : ''} ${
         isSelected ? 'board-button--selected' : ''
       } ${!hasContent ? 'board-button--empty' : ''}`}
+      data-label-position={labelPosition}
       onClick={handleClick}
-      aria-label={
-        hasContent
-          ? `Button ${button.position + 1}${button.audioBuffer ? ' - tap to play' : ''}`
-          : `Empty button ${button.position + 1}`
-      }
+      aria-label={accessibleName}
       role="gridcell"
       tabIndex={tabIndex}
     >
-      {button.imageUrl ? (
-        <img
-          src={button.imageUrl}
-          alt=""
-          className="board-button__image"
-          draggable={false}
-        />
-      ) : (
-        <span className="board-button__placeholder">
-          {isEditMode ? '+' : ''}
-        </span>
-      )}
+      <div className="board-button__content">
+        {button.imageUrl ? (
+          <img
+            src={button.imageUrl}
+            alt=""
+            className="board-button__image"
+            draggable={false}
+          />
+        ) : (
+          <span className="board-button__placeholder">
+            {isEditMode ? '+' : ''}
+          </span>
+        )}
+
+        {/* Label display (003-button-text) */}
+        {showLabel && (
+          <span className="board-button__label" dir="auto">
+            {displayLabel}
+          </span>
+        )}
+      </div>
     </button>
   );
 }

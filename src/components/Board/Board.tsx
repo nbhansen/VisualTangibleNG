@@ -6,7 +6,7 @@
  */
 
 import { useCallback, useRef, useEffect, useState } from 'react';
-import type { ButtonWithMedia, GridLayout } from '../../types';
+import type { ButtonWithMedia, GridLayout, LabelPosition } from '../../types';
 import { GRID_ARRANGEMENTS } from '../../types';
 import { BoardButton } from './BoardButton';
 import './Board.css';
@@ -18,6 +18,8 @@ interface BoardProps {
   isEditMode?: boolean;
   selectedButtonId?: string | null;
   onButtonSelect?: (button: ButtonWithMedia) => void;
+  // Label position for all buttons (003-button-text)
+  labelPosition?: LabelPosition;
 }
 
 export function Board({
@@ -27,6 +29,7 @@ export function Board({
   isEditMode = false,
   selectedButtonId = null,
   onButtonSelect,
+  labelPosition = 'below',
 }: BoardProps) {
   const [rows, cols] = GRID_ARRANGEMENTS[layout];
   const visibleButtons = buttons.slice(0, layout);
@@ -112,6 +115,7 @@ export function Board({
           isSelected={selectedButtonId === button.id}
           onSelect={() => onButtonSelect?.(button)}
           tabIndex={index === focusedIndex ? 0 : -1}
+          labelPosition={labelPosition}
         />
       ))}
     </div>
