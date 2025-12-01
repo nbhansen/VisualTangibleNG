@@ -6,7 +6,7 @@
  */
 
 import { useCallback, useRef, useEffect, useState } from 'react';
-import type { ButtonWithMedia, GridLayout } from '../../types';
+import type { ButtonWithMedia, GridLayout, LabelPosition } from '../../types';
 import { GRID_ARRANGEMENTS } from '../../types';
 import { BoardButton } from './BoardButton';
 import './Board.css';
@@ -21,6 +21,8 @@ interface BoardProps {
   // Audio feedback props (002-audio-feedback)
   playingButtonId?: string | null;
   progress?: number;
+  // Label position for all buttons (003-button-text)
+  labelPosition?: LabelPosition;
 }
 
 export function Board({
@@ -32,6 +34,7 @@ export function Board({
   onButtonSelect,
   playingButtonId = null,
   progress = 0,
+  labelPosition = 'below',
 }: BoardProps) {
   const [rows, cols] = GRID_ARRANGEMENTS[layout];
   const visibleButtons = buttons.slice(0, layout);
@@ -119,6 +122,7 @@ export function Board({
           tabIndex={index === focusedIndex ? 0 : -1}
           isPlaying={playingButtonId === button.id}
           progress={playingButtonId === button.id ? progress : 0}
+          labelPosition={labelPosition}
         />
       ))}
     </div>

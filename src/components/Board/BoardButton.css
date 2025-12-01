@@ -124,7 +124,63 @@
   transition: stroke-dashoffset 0.1s ease-out;
 }
 
-/* Ensure short audio still shows feedback (min animation duration) */
-.board-button--playing {
-  animation-duration: max(0.5s, 1s);
+/* =============================================================================
+   Button Text Labels (003-button-text)
+   ============================================================================= */
+
+/* Content container for flexbox layout */
+.board-button__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: var(--spacing-xs);
+}
+
+/* Label above image */
+.board-button[data-label-position="above"] .board-button__content {
+  flex-direction: column-reverse;
+}
+
+/* Label styles */
+.board-button__label {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  font-weight: 500;
+  color: var(--color-text);
+  text-align: center;
+  line-height: 1.2;
+  max-width: 100%;
+  padding: 0 var(--spacing-xs);
+
+  /* Text truncation - max 2 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+/* Larger font for 1-2 button layouts */
+.board[style*="repeat(1,"] .board-button__label,
+.board[style*="repeat(2,"] .board-button__label {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+}
+
+/* High contrast mode */
+@media (prefers-contrast: more) {
+  .board-button__label {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+}
+
+/* Dark mode label color */
+@media (prefers-color-scheme: dark) {
+  .board-button__label {
+    color: var(--color-text, #ffffff);
+  }
 }

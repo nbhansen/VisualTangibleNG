@@ -15,6 +15,7 @@ import type {
   GridLayout,
   BoardWithButtons,
   ButtonWithMedia,
+  LabelPosition,
 } from '../../types';
 import type { IStorageService } from '../../types/storage';
 import { initDB, SCHEMA_VERSION, type VisualTangibleDB } from './db';
@@ -103,6 +104,7 @@ export class StorageService implements IStorageService {
     const board: Board = {
       id: boardId,
       layout: DEFAULT_LAYOUT,
+      labelPosition: 'below', // (003-button-text)
       createdAt: now,
       updatedAt: now,
     };
@@ -118,6 +120,7 @@ export class StorageService implements IStorageService {
         position: i,
         imageId: null,
         audioId: null,
+        label: null, // (003-button-text)
         createdAt: now,
         updatedAt: now,
       };
@@ -217,6 +220,48 @@ export class StorageService implements IStorageService {
     };
 
     await db.put('buttons', updated);
+    return updated;
+  }
+
+  /**
+   * Update a button's text label (003-button-text)
+   */
+  async updateButtonLabel(buttonId: string, label: string | null): Promise<Button> {
+    const db = this.getDB();
+    const button = await this.getButton(buttonId);
+
+    if (!button) {
+      throw new Error(`Button not found: ${buttonId}`);
+    }
+
+    const updated: Button = {
+      ...button,
+      label,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await db.put('buttons', updated);
+    return updated;
+  }
+
+  /**
+   * Update the board's label position setting (003-button-text)
+   */
+  async updateBoardLabelPosition(boardId: string, labelPosition: LabelPosition): Promise<Board> {
+    const db = this.getDB();
+    const board = await db.get('boards', boardId);
+
+    if (!board) {
+      throw new Error(`Board not found: ${boardId}`);
+    }
+
+    const updated: Board = {
+      ...board,
+      labelPosition,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await db.put('boards', updated);
     return updated;
   }
 

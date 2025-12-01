@@ -6,7 +6,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { ButtonWithMedia } from '../../types';
+import type { ButtonWithMedia, LabelPosition } from '../../types';
 import './BoardButton.css';
 
 interface BoardButtonProps {
@@ -19,6 +19,8 @@ interface BoardButtonProps {
   // Audio feedback props (002-audio-feedback)
   isPlaying?: boolean;
   progress?: number;
+  // Label props (003-button-text)
+  labelPosition?: LabelPosition;
 }
 
 export function BoardButton({
@@ -30,6 +32,7 @@ export function BoardButton({
   tabIndex = 0,
   isPlaying = false,
   progress = 0,
+  labelPosition = 'below',
 }: BoardButtonProps) {
   const [isActive, setIsActive] = useState(false);
 
@@ -53,6 +56,17 @@ export function BoardButton({
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - progress);
 
+  // Resolve label from button.label (003-button-text)
+  const displayLabel = button.label ?? null;
+  const showLabel = displayLabel && labelPosition !== 'hidden';
+
+  // Build accessible name including label if present (003-button-text)
+  const accessibleName = displayLabel
+    ? `${displayLabel}${button.audioBuffer ? ' - tap to play' : ''}`
+    : hasContent
+      ? `Button ${button.position + 1}${button.audioBuffer ? ' - tap to play' : ''}`
+      : `Empty button ${button.position + 1}`;
+
   return (
     <button
       type="button"
@@ -61,28 +75,34 @@ export function BoardButton({
       } ${!hasContent ? 'board-button--empty' : ''} ${
         isPlaying ? 'board-button--playing' : ''
       }`}
+      data-label-position={labelPosition}
       onClick={handleClick}
-      aria-label={
-        hasContent
-          ? `Button ${button.position + 1}${button.audioBuffer ? ' - tap to play' : ''}`
-          : `Empty button ${button.position + 1}`
-      }
+      aria-label={accessibleName}
       aria-pressed={isPlaying}
       role="gridcell"
       tabIndex={tabIndex}
     >
-      {button.imageUrl ? (
-        <img
-          src={button.imageUrl}
-          alt=""
-          className="board-button__image"
-          draggable={false}
-        />
-      ) : (
-        <span className="board-button__placeholder">
-          {isEditMode ? '+' : ''}
-        </span>
-      )}
+      <div className="board-button__content">
+        {button.imageUrl ? (
+          <img
+            src={button.imageUrl}
+            alt=""
+            className="board-button__image"
+            draggable={false}
+          />
+        ) : (
+          <span className="board-button__placeholder">
+            {isEditMode ? '+' : ''}
+          </span>
+        )}
+
+        {/* Label display (003-button-text) */}
+        {showLabel && (
+          <span className="board-button__label" dir="auto">
+            {displayLabel}
+          </span>
+        )}
+      </div>
 
       {/* Progress ring - only shown when playing (002-audio-feedback) */}
       {isPlaying && (

@@ -33,6 +33,38 @@ export const MAX_AUDIO_DURATION_SECONDS = 30;
 export const MAX_IMAGE_DIMENSION_PX = 512;
 export const MAX_BUTTON_POSITIONS = 16;
 
+/**
+ * Maximum length for button labels (003-button-text)
+ */
+export const MAX_LABEL_LENGTH = 50;
+
+/**
+ * Position for text labels relative to button image (003-button-text)
+ */
+export type LabelPosition = 'above' | 'below' | 'hidden';
+
+/**
+ * Validates a label string (003-button-text)
+ * @param label The label to validate
+ * @returns true if valid (null, or string 1-50 chars after trim)
+ */
+export function isValidLabel(label: string | null): boolean {
+  if (label === null) return true;
+  const trimmed = label.trim();
+  return trimmed.length > 0 && trimmed.length <= MAX_LABEL_LENGTH;
+}
+
+/**
+ * Normalizes a label for storage (trims whitespace) (003-button-text)
+ * @param label The label to normalize
+ * @returns Trimmed label, or null if empty/whitespace-only
+ */
+export function normalizeLabel(label: string | null | undefined): string | null {
+  if (label === null || label === undefined) return null;
+  const trimmed = label.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
 // =============================================================================
 // Entity Types
 // =============================================================================
@@ -59,6 +91,8 @@ export interface Board {
   id: string;
   /** Number of buttons to display */
   layout: GridLayout;
+  /** Position for text labels (003-button-text) */
+  labelPosition: LabelPosition;
   /** ISO 8601 timestamp */
   createdAt: string;
   /** ISO 8601 timestamp */
@@ -79,6 +113,8 @@ export interface Button {
   imageId: string | null;
   /** Foreign key to Audio, null if none */
   audioId: string | null;
+  /** Text label for the button (003-button-text) */
+  label: string | null;
   /** ISO 8601 timestamp */
   createdAt: string;
   /** ISO 8601 timestamp */
