@@ -37,6 +37,11 @@ export const SIZE_CONSTRAINTS = {
 } as const;
 
 /**
+ * Maximum buttons per board (performance limit).
+ */
+export const MAX_BUTTONS = 50;
+
+/**
  * Validate button position/size.
  */
 export function isValidPosition(pos: ButtonPosition): boolean {
@@ -208,7 +213,8 @@ export function calculateResizeBounds(
   const deltaX = (currentX - startX) / zoom;
   const deltaY = (currentY - startY) / zoom;
 
-  let { x, y, width, height, zIndex } = originalBounds;
+  let { x, y, width, height } = originalBounds;
+  const { zIndex } = originalBounds;
 
   // Proportional resize based on handle
   switch (handle) {

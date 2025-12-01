@@ -33,6 +33,114 @@ export const MAX_AUDIO_DURATION_SECONDS = 30;
 export const MAX_IMAGE_DIMENSION_PX = 512;
 export const MAX_BUTTON_POSITIONS = 16;
 
+// =============================================================================
+// Freeform Board Types (004-freeform-board)
+// =============================================================================
+
+/**
+ * Board layout mode (004-freeform-board)
+ */
+export type BoardMode = 'grid' | 'freeform';
+
+/**
+ * Viewport state for canvas navigation (004-freeform-board)
+ */
+export interface Viewport {
+  /** Zoom level (0.5 to 2.0) */
+  zoom: number;
+  /** X translation in screen coordinates */
+  panX: number;
+  /** Y translation in screen coordinates */
+  panY: number;
+}
+
+/**
+ * Canvas configuration (004-freeform-board)
+ */
+export interface CanvasConfig {
+  /** Virtual canvas width in world coordinates */
+  width: number;
+  /** Virtual canvas height in world coordinates */
+  height: number;
+}
+
+/**
+ * Default viewport state (004-freeform-board)
+ */
+export const DEFAULT_VIEWPORT: Viewport = {
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+};
+
+/**
+ * Default canvas configuration (004-freeform-board)
+ */
+export const DEFAULT_CANVAS_CONFIG: CanvasConfig = {
+  width: 1920,
+  height: 1080,
+};
+
+/**
+ * Zoom constraints (004-freeform-board)
+ */
+export const ZOOM_CONSTRAINTS = {
+  MIN: 0.5,
+  MAX: 2.0,
+  STEP: 0.1,
+} as const;
+
+/**
+ * Point in 2D space (004-freeform-board)
+ */
+export interface Point {
+  x: number;
+  y: number;
+}
+
+/**
+ * Rectangle bounds (004-freeform-board)
+ */
+export interface Bounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Button position and size for freeform mode (004-freeform-board)
+ */
+export interface ButtonPosition {
+  /** X position in world coordinates */
+  x: number;
+  /** Y position in world coordinates */
+  y: number;
+  /** Width in world units */
+  width: number;
+  /** Height in world units */
+  height: number;
+  /** Stacking order (higher = front) */
+  zIndex: number;
+}
+
+/**
+ * Size constraints for buttons (004-freeform-board)
+ */
+export const SIZE_CONSTRAINTS = {
+  MIN_WIDTH: 44,
+  MIN_HEIGHT: 44,
+  MAX_WIDTH: 500,
+  MAX_HEIGHT: 500,
+  DEFAULT_WIDTH: 120,
+  DEFAULT_HEIGHT: 120,
+} as const;
+
+/**
+ * Maximum buttons per board - performance limit (004-freeform-board)
+ */
+export const MAX_BUTTONS = 50;
+
 /**
  * Maximum length for button labels (003-button-text)
  */
@@ -93,6 +201,18 @@ export interface Board {
   layout: GridLayout;
   /** Position for text labels (003-button-text) */
   labelPosition: LabelPosition;
+  /** Board mode - grid or freeform (004-freeform-board) */
+  mode: BoardMode;
+  /** Virtual canvas width (004-freeform-board) */
+  canvasWidth: number;
+  /** Virtual canvas height (004-freeform-board) */
+  canvasHeight: number;
+  /** Current viewport zoom level (004-freeform-board) */
+  viewportZoom: number;
+  /** Current viewport pan X offset (004-freeform-board) */
+  viewportPanX: number;
+  /** Current viewport pan Y offset (004-freeform-board) */
+  viewportPanY: number;
   /** ISO 8601 timestamp */
   createdAt: string;
   /** ISO 8601 timestamp */
@@ -107,7 +227,7 @@ export interface Button {
   id: string;
   /** Foreign key to Board */
   boardId: string;
-  /** 0-indexed position (0-15) */
+  /** 0-indexed position (0-15) for grid mode */
   position: number;
   /** Foreign key to Image, null if none */
   imageId: string | null;
@@ -115,6 +235,16 @@ export interface Button {
   audioId: string | null;
   /** Text label for the button (003-button-text) */
   label: string | null;
+  /** X position in world coords (004-freeform-board), null in grid mode */
+  x: number | null;
+  /** Y position in world coords (004-freeform-board), null in grid mode */
+  y: number | null;
+  /** Width in world units (004-freeform-board), null in grid mode */
+  width: number | null;
+  /** Height in world units (004-freeform-board), null in grid mode */
+  height: number | null;
+  /** Stacking order (004-freeform-board), null in grid mode */
+  zIndex: number | null;
   /** ISO 8601 timestamp */
   createdAt: string;
   /** ISO 8601 timestamp */

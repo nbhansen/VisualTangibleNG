@@ -16,12 +16,16 @@ import type {
   BoardWithButtons,
   ButtonWithMedia,
   LabelPosition,
+  BoardMode,
+  Viewport,
+  ButtonPosition,
 } from '../../types';
+import { DEFAULT_CANVAS_CONFIG, DEFAULT_VIEWPORT } from '../../types';
 import type { IStorageService } from '../../types/storage';
 import { initDB, SCHEMA_VERSION, type VisualTangibleDB } from './db';
 
 const DEFAULT_LAYOUT: GridLayout = 4;
-const MAX_BUTTONS = 16;
+const MAX_BUTTONS_GRID = 16;
 
 export class StorageService implements IStorageService {
   private db: IDBPDatabase<VisualTangibleDB> | null = null;
@@ -105,6 +109,12 @@ export class StorageService implements IStorageService {
       id: boardId,
       layout: DEFAULT_LAYOUT,
       labelPosition: 'below', // (003-button-text)
+      mode: 'grid', // (004-freeform-board)
+      canvasWidth: DEFAULT_CANVAS_CONFIG.width,
+      canvasHeight: DEFAULT_CANVAS_CONFIG.height,
+      viewportZoom: DEFAULT_VIEWPORT.zoom,
+      viewportPanX: DEFAULT_VIEWPORT.panX,
+      viewportPanY: DEFAULT_VIEWPORT.panY,
       createdAt: now,
       updatedAt: now,
     };
@@ -113,7 +123,7 @@ export class StorageService implements IStorageService {
 
     // Create 16 empty buttons
     const tx = db.transaction('buttons', 'readwrite');
-    for (let i = 0; i < MAX_BUTTONS; i++) {
+    for (let i = 0; i < MAX_BUTTONS_GRID; i++) {
       const button: Button = {
         id: uuidv4(),
         boardId,
@@ -121,6 +131,11 @@ export class StorageService implements IStorageService {
         imageId: null,
         audioId: null,
         label: null, // (003-button-text)
+        x: null, // (004-freeform-board)
+        y: null,
+        width: null,
+        height: null,
+        zIndex: null,
         createdAt: now,
         updatedAt: now,
       };
@@ -263,6 +278,165 @@ export class StorageService implements IStorageService {
 
     await db.put('boards', updated);
     return updated;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Freeform Board Operations (004-freeform-board)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Update a button's position in freeform mode (004-freeform-board)
+   */
+  async updateButtonPosition(
+    buttonId: string,
+    position: { x: number; y: number; width: number; height: number }
+  ): Promise<Button> {
+    const db = this.getDB();
+    const button = await this.getButton(buttonId);
+
+    if (!button) {
+      throw new Error(`Button not found: ${buttonId}`);
+    }
+
+    const updated: Button = {
+      ...button,
+      x: position.x,
+      y: position.y,
+      width: position.width,
+      height: position.height,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await db.put('buttons', updated);
+    return updated;
+  }
+
+  /**
+   * Update a button's z-index (004-freeform-board)
+   */
+  async updateButtonZIndex(buttonId: string, zIndex: number): Promise<Button> {
+    const db = this.getDB();
+    const button = await this.getButton(buttonId);
+
+    if (!button) {
+      throw new Error(`Button not found: ${buttonId}`);
+    }
+
+    const updated: Button = {
+      ...button,
+      zIndex,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await db.put('buttons', updated);
+    return updated;
+  }
+
+  /**
+   * Update the board's mode (grid or freeform) (004-freeform-board)
+   */
+  async updateBoardMode(boardId: string, mode: BoardMode): Promise<Board> {
+    const db = this.getDB();
+    const board = await db.get('boards', boardId);
+
+    if (!board) {
+      throw new Error(`Board not found: ${boardId}`);
+    }
+
+    const updated: Board = {
+      ...board,
+      mode,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await db.put('boards', updated);
+    return updated;
+  }
+
+  /**
+   * Update the board's viewport state (004-freeform-board)
+   */
+  async updateBoardViewport(boardId: string, viewport: Viewport): Promise<Board> {
+    const db = this.getDB();
+    const board = await db.get('boards', boardId);
+
+    if (!board) {
+      throw new Error(`Board not found: ${boardId}`);
+    }
+
+    const updated: Board = {
+      ...board,
+      viewportZoom: viewport.zoom,
+      viewportPanX: viewport.panX,
+      viewportPanY: viewport.panY,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await db.put('boards', updated);
+    return updated;
+  }
+
+  /**
+   * Batch update button positions (for mode switching) (004-freeform-board)
+   */
+  async batchUpdateButtonPositions(
+    updates: Array<{ buttonId: string; position: ButtonPosition }>
+  ): Promise<void> {
+    const db = this.getDB();
+    const tx = db.transaction('buttons', 'readwrite');
+    const now = new Date().toISOString();
+
+    for (const { buttonId, position } of updates) {
+      const button = await tx.store.get(buttonId);
+      if (button) {
+        const updated: Button = {
+          ...button,
+          x: position.x,
+          y: position.y,
+          width: position.width,
+          height: position.height,
+          zIndex: position.zIndex,
+          updatedAt: now,
+        };
+        await tx.store.put(updated);
+      }
+    }
+
+    await tx.done;
+  }
+
+  /**
+   * Create a new button with position (freeform mode) (004-freeform-board)
+   */
+  async createButtonWithPosition(
+    boardId: string,
+    position: ButtonPosition
+  ): Promise<Button> {
+    const db = this.getDB();
+    const now = new Date().toISOString();
+
+    // Find the next grid position for this board
+    const existingButtons = await this.getButtonsByBoard(boardId);
+    const nextPosition = existingButtons.length;
+
+    const button: Button = {
+      id: uuidv4(),
+      boardId,
+      position: nextPosition,
+      imageId: null,
+      audioId: null,
+      label: null,
+      x: position.x,
+      y: position.y,
+      width: position.width,
+      height: position.height,
+      zIndex: position.zIndex,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    await db.put('buttons', button);
+    return button;
   }
 
   // ---------------------------------------------------------------------------

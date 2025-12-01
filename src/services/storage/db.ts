@@ -9,7 +9,7 @@ import type { AppState, Board, Button, Image, Audio } from '../../types';
 
 // Database name and version
 export const DB_NAME = 'visual-tangible-ng';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 
 // Schema version stored in AppState for migrations
 export const SCHEMA_VERSION = '1.0.0';
@@ -109,6 +109,90 @@ export async function initDB(): Promise<IDBPDatabase<VisualTangibleDB>> {
             cursor.update(button);
           }
           cursor.continue().then(migrateButtonsCursor);
+        });
+      }
+
+      // Migration v2 → v3: Add freeform board fields (004-freeform-board)
+      if (oldVersion < 3) {
+        // Migrate existing boards to have freeform defaults
+        const boardsStore = transaction.objectStore('boards');
+        boardsStore.openCursor().then(function migrateBoardsV3(cursor) {
+          if (!cursor) return;
+          const board = cursor.value as Board & {
+            mode?: string;
+            canvasWidth?: number;
+            canvasHeight?: number;
+            viewportZoom?: number;
+            viewportPanX?: number;
+            viewportPanY?: number;
+          };
+          let needsUpdate = false;
+          if (board.mode === undefined) {
+            board.mode = 'grid';
+            needsUpdate = true;
+          }
+          if (board.canvasWidth === undefined) {
+            board.canvasWidth = 1920;
+            needsUpdate = true;
+          }
+          if (board.canvasHeight === undefined) {
+            board.canvasHeight = 1080;
+            needsUpdate = true;
+          }
+          if (board.viewportZoom === undefined) {
+            board.viewportZoom = 1;
+            needsUpdate = true;
+          }
+          if (board.viewportPanX === undefined) {
+            board.viewportPanX = 0;
+            needsUpdate = true;
+          }
+          if (board.viewportPanY === undefined) {
+            board.viewportPanY = 0;
+            needsUpdate = true;
+          }
+          if (needsUpdate) {
+            cursor.update(board as Board);
+          }
+          cursor.continue().then(migrateBoardsV3);
+        });
+
+        // Migrate existing buttons to have freeform position defaults (null)
+        const buttonsStore = transaction.objectStore('buttons');
+        buttonsStore.openCursor().then(function migrateButtonsV3(cursor) {
+          if (!cursor) return;
+          const button = cursor.value as Button & {
+            x?: number | null;
+            y?: number | null;
+            width?: number | null;
+            height?: number | null;
+            zIndex?: number | null;
+          };
+          let needsUpdate = false;
+          if (button.x === undefined) {
+            button.x = null;
+            needsUpdate = true;
+          }
+          if (button.y === undefined) {
+            button.y = null;
+            needsUpdate = true;
+          }
+          if (button.width === undefined) {
+            button.width = null;
+            needsUpdate = true;
+          }
+          if (button.height === undefined) {
+            button.height = null;
+            needsUpdate = true;
+          }
+          if (button.zIndex === undefined) {
+            button.zIndex = null;
+            needsUpdate = true;
+          }
+          if (needsUpdate) {
+            cursor.update(button as Button);
+          }
+          cursor.continue().then(migrateButtonsV3);
         });
       }
     },

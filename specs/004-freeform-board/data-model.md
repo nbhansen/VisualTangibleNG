@@ -96,16 +96,30 @@ export interface CanvasConfig {
 }
 
 /**
- * Constraints for button positioning.
+ * Size constraints for buttons (matches contracts/positioning.ts).
  */
-export const POSITION_CONSTRAINTS = {
+export const SIZE_CONSTRAINTS = {
   MIN_WIDTH: 44,
   MIN_HEIGHT: 44,
   MAX_WIDTH: 500,
   MAX_HEIGHT: 500,
-  MIN_ZOOM: 0.5,
-  MAX_ZOOM: 2.0,
+  DEFAULT_WIDTH: 120,
+  DEFAULT_HEIGHT: 120,
 } as const;
+
+/**
+ * Zoom constraints (matches contracts/canvas.ts).
+ */
+export const ZOOM_CONSTRAINTS = {
+  MIN: 0.5,
+  MAX: 2.0,
+  STEP: 0.1,
+} as const;
+
+/**
+ * Board limits.
+ */
+export const MAX_BUTTONS = 50;
 
 /**
  * Extended Button type with freeform support.

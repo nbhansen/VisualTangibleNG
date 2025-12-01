@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getStorageService, StorageService } from '../services/storage';
-import type { BoardWithButtons, GridLayout, Image, Audio, LabelPosition } from '../types';
+import type { BoardWithButtons, GridLayout, Image, Audio, LabelPosition, BoardMode, ButtonPosition } from '../types';
 
 interface UseStorageReturn {
   isInitialized: boolean;
@@ -32,6 +32,9 @@ interface UseStorageReturn {
   // Label operations (003-button-text)
   updateButtonLabel: (buttonId: string, label: string | null) => Promise<void>;
   updateBoardLabelPosition: (boardId: string, position: LabelPosition) => Promise<void>;
+  // Freeform operations (004-freeform-board)
+  updateBoardMode: (boardId: string, mode: BoardMode) => Promise<void>;
+  batchUpdateButtonPositions: (updates: Array<{ buttonId: string; position: ButtonPosition }>) => Promise<void>;
 }
 
 export function useStorage(): UseStorageReturn {
@@ -140,6 +143,22 @@ export function useStorage(): UseStorageReturn {
     [getService]
   );
 
+  // Update board mode (004-freeform-board)
+  const updateBoardMode = useCallback(
+    async (boardId: string, mode: BoardMode): Promise<void> => {
+      await getService().updateBoardMode(boardId, mode);
+    },
+    [getService]
+  );
+
+  // Batch update button positions (004-freeform-board)
+  const batchUpdateButtonPositions = useCallback(
+    async (updates: Array<{ buttonId: string; position: ButtonPosition }>): Promise<void> => {
+      await getService().batchUpdateButtonPositions(updates);
+    },
+    [getService]
+  );
+
   return {
     isInitialized,
     error,
@@ -152,5 +171,7 @@ export function useStorage(): UseStorageReturn {
     resetAllData,
     updateButtonLabel,
     updateBoardLabelPosition,
+    updateBoardMode,
+    batchUpdateButtonPositions,
   };
 }
