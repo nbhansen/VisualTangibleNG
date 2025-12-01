@@ -138,3 +138,51 @@ export type AudioErrorCode =
   | 'NOT_RECORDING' // Attempted to stop when not recording
   | 'DECODE_FAILED' // Failed to decode audio blob
   | 'PLAYBACK_FAILED'; // Failed to play audio
+
+// =============================================================================
+// Audio Playback Feedback (002-audio-feedback)
+// =============================================================================
+
+/**
+ * Current playback progress information.
+ * Used to drive visual feedback (pulse animation, progress ring).
+ */
+export interface PlaybackProgress {
+  /** ID of the button whose audio is playing */
+  buttonId: string;
+
+  /** Elapsed playback time in seconds */
+  elapsed: number;
+
+  /** Total audio duration in seconds */
+  duration: number;
+
+  /** Progress as a value from 0 to 1 */
+  progress: number;
+}
+
+/**
+ * Return type for the enhanced useAudio hook with feedback support.
+ */
+export interface UseAudioWithFeedbackReturn {
+  /** Play audio for a button */
+  play: (audioBlob: Blob, buttonId: string) => Promise<void>;
+
+  /** Stop current playback */
+  stop: () => void;
+
+  /** Whether audio is currently playing */
+  isPlaying: boolean;
+
+  /** ID of the currently playing button, or null */
+  playingButtonId: string | null;
+
+  /** Current progress (0-1), or 0 if not playing */
+  progress: number;
+
+  /** Elapsed time in seconds, or 0 if not playing */
+  elapsed: number;
+
+  /** Total duration in seconds, or 0 if not playing */
+  duration: number;
+}

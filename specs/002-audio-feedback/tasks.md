@@ -98,7 +98,7 @@
 
 ### Implementation for User Story 3
 
-- [X] T026 [US3] Call stopAll() when transitioning from view to edit mode in src/App.tsx
+- [X] T026 [US3] Call stopAll() when transitioning from view to edit mode in src/components/ViewMode.tsx
 - [X] T027 [US3] Ensure playingButtonId resets to null when stop() is called in useAudio.ts
 - [X] T028 [US3] Clear progress state when audio stops in useAudio.ts
 

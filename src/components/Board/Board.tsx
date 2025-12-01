@@ -18,6 +18,9 @@ interface BoardProps {
   isEditMode?: boolean;
   selectedButtonId?: string | null;
   onButtonSelect?: (button: ButtonWithMedia) => void;
+  // Audio feedback props (002-audio-feedback)
+  playingButtonId?: string | null;
+  progress?: number;
 }
 
 export function Board({
@@ -27,6 +30,8 @@ export function Board({
   isEditMode = false,
   selectedButtonId = null,
   onButtonSelect,
+  playingButtonId = null,
+  progress = 0,
 }: BoardProps) {
   const [rows, cols] = GRID_ARRANGEMENTS[layout];
   const visibleButtons = buttons.slice(0, layout);
@@ -112,6 +117,8 @@ export function Board({
           isSelected={selectedButtonId === button.id}
           onSelect={() => onButtonSelect?.(button)}
           tabIndex={index === focusedIndex ? 0 : -1}
+          isPlaying={playingButtonId === button.id}
+          progress={playingButtonId === button.id ? progress : 0}
         />
       ))}
     </div>

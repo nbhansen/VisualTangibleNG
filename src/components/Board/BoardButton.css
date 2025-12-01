@@ -66,3 +66,65 @@
   color: var(--color-text-secondary);
   user-select: none;
 }
+
+/* =============================================================================
+   Audio Playback Feedback (002-audio-feedback)
+   ============================================================================= */
+
+/* Pulse animation keyframes */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--color-primary);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px transparent;
+    transform: scale(1.02);
+  }
+}
+
+/* Playing state - pulsing animation */
+.board-button--playing {
+  animation: pulse 1s ease-in-out infinite;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+/* Reduced motion - static glow instead of animation */
+@media (prefers-reduced-motion: reduce) {
+  .board-button--playing {
+    animation: none;
+    box-shadow: 0 0 0 4px var(--color-primary-light), 0 0 12px var(--color-primary);
+  }
+}
+
+/* Progress ring container */
+.board-button__progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transform: rotate(-90deg);
+}
+
+/* Progress ring background */
+.board-button__progress-ring-bg {
+  fill: none;
+  stroke: var(--color-border);
+  opacity: 0.3;
+}
+
+/* Progress ring fill */
+.board-button__progress-ring-fill {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s ease-out;
+}
+
+/* Ensure short audio still shows feedback (min animation duration) */
+.board-button--playing {
+  animation-duration: max(0.5s, 1s);
+}

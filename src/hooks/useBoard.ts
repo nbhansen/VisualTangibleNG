@@ -16,12 +16,16 @@ interface UseBoardReturn {
   error: string | null;
   playButtonAudio: (button: ButtonWithMedia) => void;
   refreshBoard: () => Promise<void>;
+  // Audio feedback state (002-audio-feedback)
+  playingButtonId: string | null;
+  progress: number;
+  stopAllAudio: () => void;
 }
 
 export function useBoard(): UseBoardReturn {
   const { state, setBoard, setLoading, setError } = useAppContext();
   const { isInitialized, loadBoard } = useStorage();
-  const { initialize: initAudio, playBuffer, decodeAudio } = useAudio();
+  const { initialize: initAudio, playBuffer, decodeAudio, playingButtonId, progress, stopAll } = useAudio();
 
   // Track decoded audio buffers
   const audioBuffersRef = useRef<Map<string, AudioBuffer>>(new Map());
@@ -95,7 +99,7 @@ export function useBoard(): UseBoardReturn {
       }
 
       if (buffer) {
-        playBuffer(buffer);
+        playBuffer(buffer, button.id);
       }
     },
     [initAudio, decodeAudio, playBuffer, setError]
@@ -119,5 +123,9 @@ export function useBoard(): UseBoardReturn {
     error: state.error,
     playButtonAudio,
     refreshBoard,
+    // Audio feedback state (002-audio-feedback)
+    playingButtonId,
+    progress,
+    stopAllAudio: stopAll,
   };
 }

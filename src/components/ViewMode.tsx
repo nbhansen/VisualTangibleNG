@@ -10,7 +10,7 @@ import { useAppContext } from '../hooks/useAppContext';
 import './ViewMode.css';
 
 export function ViewMode() {
-  const { board, playButtonAudio } = useBoard();
+  const { board, playButtonAudio, playingButtonId, progress, stopAllAudio } = useBoard();
   const { setMode } = useAppContext();
 
   if (!board) {
@@ -22,7 +22,8 @@ export function ViewMode() {
   }
 
   const handleEditClick = () => {
-    // Will check PIN in Phase 4
+    // Stop any playing audio when entering edit mode (002-audio-feedback)
+    stopAllAudio();
     setMode('pin-entry');
   };
 
@@ -33,6 +34,8 @@ export function ViewMode() {
           buttons={board.buttons}
           layout={board.layout}
           onButtonTap={playButtonAudio}
+          playingButtonId={playingButtonId}
+          progress={progress}
         />
       </main>
       <footer className="view-mode__footer">

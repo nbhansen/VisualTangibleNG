@@ -2,14 +2,20 @@
  * Audio Playback Service
  *
  * Low-latency audio playback using Web Audio API.
+ * Extended with progress tracking for visual feedback (002-audio-feedback).
  */
 
-import type { IAudioPlaybackService, AudioPlaybackHandle } from '../../types/audio';
+import type { IAudioPlaybackService, AudioPlaybackHandle, PlaybackProgress } from '../../types/audio';
 import { AudioError } from '../../types/audio';
 
 class AudioPlaybackService implements IAudioPlaybackService {
   private audioContext: AudioContext | null = null;
   private currentSources: Set<AudioBufferSourceNode> = new Set();
+
+  // Playback feedback state (002-audio-feedback)
+  private currentButtonId: string | null = null;
+  private playbackStartTime: number = 0;
+  private playbackDuration: number = 0;
 
   async initialize(): Promise<void> {
     if (!this.audioContext) {
@@ -42,7 +48,7 @@ class AudioPlaybackService implements IAudioPlaybackService {
     }
   }
 
-  play(buffer: AudioBuffer): AudioPlaybackHandle {
+  play(buffer: AudioBuffer, buttonId?: string): AudioPlaybackHandle {
     if (!this.audioContext) {
       throw new AudioError('Audio context not initialized', 'PLAYBACK_FAILED');
     }
@@ -58,6 +64,11 @@ class AudioPlaybackService implements IAudioPlaybackService {
 
     this.currentSources.add(source);
 
+    // Track playback state for feedback (002-audio-feedback)
+    this.currentButtonId = buttonId ?? null;
+    this.playbackStartTime = this.audioContext.currentTime;
+    this.playbackDuration = buffer.duration;
+
     let resolveOnEnded: () => void;
     const onEnded = new Promise<void>((resolve) => {
       resolveOnEnded = resolve;
@@ -65,6 +76,12 @@ class AudioPlaybackService implements IAudioPlaybackService {
 
     source.onended = () => {
       this.currentSources.delete(source);
+      // Clear playback state
+      if (this.currentButtonId === buttonId) {
+        this.currentButtonId = null;
+        this.playbackStartTime = 0;
+        this.playbackDuration = 0;
+      }
       resolveOnEnded();
     };
 
@@ -75,12 +92,45 @@ class AudioPlaybackService implements IAudioPlaybackService {
         try {
           source.stop();
           this.currentSources.delete(source);
+          // Clear playback state
+          if (this.currentButtonId === buttonId) {
+            this.currentButtonId = null;
+            this.playbackStartTime = 0;
+            this.playbackDuration = 0;
+          }
         } catch {
           // Already stopped
         }
       },
       onEnded,
     };
+  }
+
+  /**
+   * Get current playback progress.
+   * Returns null if nothing is playing.
+   */
+  getPlaybackProgress(): PlaybackProgress | null {
+    if (!this.currentButtonId || !this.audioContext || this.playbackDuration === 0) {
+      return null;
+    }
+
+    const elapsed = this.audioContext.currentTime - this.playbackStartTime;
+    const progress = Math.min(1, Math.max(0, elapsed / this.playbackDuration));
+
+    return {
+      buttonId: this.currentButtonId,
+      elapsed,
+      duration: this.playbackDuration,
+      progress,
+    };
+  }
+
+  /**
+   * Get the currently playing button ID.
+   */
+  getCurrentButtonId(): string | null {
+    return this.currentButtonId;
   }
 
   stopAll(): void {
@@ -92,6 +142,10 @@ class AudioPlaybackService implements IAudioPlaybackService {
       }
     }
     this.currentSources.clear();
+    // Clear playback state (002-audio-feedback)
+    this.currentButtonId = null;
+    this.playbackStartTime = 0;
+    this.playbackDuration = 0;
   }
 
   dispose(): void {
