@@ -1,0 +1,130 @@
+/* =============================================================================
+   BoardButton Component Styles
+   ============================================================================= */
+
+.board-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
+  padding: var(--spacing-xs);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  overflow: hidden;
+  transition: transform 0.1s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.board-button:hover {
+  background-color: var(--color-surface);
+  border-color: var(--color-primary-light);
+}
+
+.board-button:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Active state (tap feedback) */
+.board-button--active {
+  transform: scale(0.95);
+  box-shadow: 0 0 0 4px var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+/* Selected state (edit mode) */
+.board-button--selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+/* Empty button */
+.board-button--empty {
+  background-color: var(--color-background);
+  border-style: dashed;
+}
+
+/* Image */
+.board-button__image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Placeholder */
+.board-button__placeholder {
+  font-size: 2rem;
+  color: var(--color-text-secondary);
+  user-select: none;
+}
+
+/* =============================================================================
+   Audio Playback Feedback (002-audio-feedback)
+   ============================================================================= */
+
+/* Pulse animation keyframes */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--color-primary);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px transparent;
+    transform: scale(1.02);
+  }
+}
+
+/* Playing state - pulsing animation */
+.board-button--playing {
+  animation: pulse 1s ease-in-out infinite;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+/* Reduced motion - static glow instead of animation */
+@media (prefers-reduced-motion: reduce) {
+  .board-button--playing {
+    animation: none;
+    box-shadow: 0 0 0 4px var(--color-primary-light), 0 0 12px var(--color-primary);
+  }
+}
+
+/* Progress ring container */
+.board-button__progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transform: rotate(-90deg);
+}
+
+/* Progress ring background */
+.board-button__progress-ring-bg {
+  fill: none;
+  stroke: var(--color-border);
+  opacity: 0.3;
+}
+
+/* Progress ring fill */
+.board-button__progress-ring-fill {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s ease-out;
+}
+
+/* Ensure short audio still shows feedback (min animation duration) */
+.board-button--playing {
+  animation-duration: max(0.5s, 1s);
+}

@@ -1,0 +1,63 @@
+/* =============================================================================
+   ViewMode Component Styles
+   ============================================================================= */
+
+.view-mode {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+.view-mode--loading {
+  align-items: center;
+  justify-content: center;
+}
+
+.view-mode__board {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.view-mode__footer {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-md);
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.view-mode__edit-button {
+  min-width: 120px;
+  background-color: var(--color-text-secondary);
+}
+
+.view-mode__edit-button:hover {
+  background-color: var(--color-text);
+}
+
+/* Hide edit button in fullscreen/presentation mode */
+@media (display-mode: standalone) {
+  .view-mode__footer {
+    /* Keep visible but make less prominent */
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  .view-mode__footer:hover {
+    opacity: 1;
+  }
+}
+
+/* Landscape optimization */
+@media (orientation: landscape) and (max-height: 500px) {
+  .view-mode__footer {
+    padding: var(--spacing-sm);
+  }
+
+  .view-mode__edit-button {
+    min-height: 36px;
+    font-size: 0.875rem;
+  }
+}
