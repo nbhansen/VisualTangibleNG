@@ -1,0 +1,68 @@
+/* =============================================================================
+   BoardButton Component Styles
+   ============================================================================= */
+
+.board-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
+  padding: var(--spacing-xs);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  overflow: hidden;
+  transition: transform 0.1s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.board-button:hover {
+  background-color: var(--color-surface);
+  border-color: var(--color-primary-light);
+}
+
+.board-button:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Active state (tap feedback) */
+.board-button--active {
+  transform: scale(0.95);
+  box-shadow: 0 0 0 4px var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+/* Selected state (edit mode) */
+.board-button--selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+/* Empty button */
+.board-button--empty {
+  background-color: var(--color-background);
+  border-style: dashed;
+}
+
+/* Image */
+.board-button__image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Placeholder */
+.board-button__placeholder {
+  font-size: 2rem;
+  color: var(--color-text-secondary);
+  user-select: none;
+}

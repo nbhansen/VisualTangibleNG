@@ -1,0 +1,430 @@
+/* =============================================================================
+   Editor Component Styles
+   ============================================================================= */
+
+/* Image Picker */
+.image-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.image-picker__input {
+  display: none;
+}
+
+.image-picker__button {
+  min-width: 150px;
+}
+
+/* Button Editor */
+.button-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+}
+
+.button-editor__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.button-editor__error {
+  margin: 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.875rem;
+  color: var(--color-error);
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: var(--radius-sm);
+}
+
+.button-editor__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.button-editor__section h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.button-editor__preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.button-editor__image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+}
+
+.button-editor__remove {
+  background-color: var(--color-error);
+  font-size: 0.875rem;
+}
+
+.button-editor__remove:hover {
+  background-color: #d32f2f;
+}
+
+.button-editor__loading {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.button-editor__audio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.button-editor__placeholder {
+  margin: 0;
+  padding: var(--spacing-md);
+  color: var(--color-text-secondary);
+  text-align: center;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+/* Edit Mode Layout */
+.edit-mode {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+.edit-mode__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.edit-mode__header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.edit-mode__content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.edit-mode__board {
+  flex: 1;
+  overflow: hidden;
+}
+
+.edit-mode__sidebar {
+  width: 320px;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-border);
+  background-color: var(--color-background);
+}
+
+.edit-mode__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--spacing-lg);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* Responsive - stack on mobile */
+@media (max-width: 768px) {
+  .edit-mode__content {
+    flex-direction: column;
+  }
+
+  .edit-mode__sidebar {
+    width: 100%;
+    max-height: 50vh;
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+/* =============================================================================
+   Audio Recorder Styles
+   ============================================================================= */
+
+.audio-recorder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+}
+
+.audio-recorder__error {
+  margin: 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.875rem;
+  color: var(--color-error);
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.audio-recorder__button {
+  min-width: 120px;
+}
+
+.audio-recorder__button--record {
+  background-color: var(--color-error);
+}
+
+.audio-recorder__button--record:hover {
+  background-color: #d32f2f;
+}
+
+.audio-recorder__button--stop {
+  background-color: var(--color-error);
+}
+
+.audio-recorder__button--cancel {
+  background-color: var(--color-text-secondary);
+}
+
+.audio-recorder__button--discard {
+  background-color: var(--color-text-secondary);
+}
+
+.audio-recorder__button--preview {
+  background-color: var(--color-primary);
+}
+
+.audio-recorder__button--save {
+  background-color: var(--color-primary);
+}
+
+/* Timer display */
+.audio-recorder__timer {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.audio-recorder__elapsed {
+  color: var(--color-text);
+}
+
+.audio-recorder__separator {
+  color: var(--color-text-secondary);
+}
+
+.audio-recorder__remaining {
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+}
+
+/* Recording indicator */
+.audio-recorder__indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--color-error);
+  font-size: 0.875rem;
+}
+
+.audio-recorder__dot {
+  width: 12px;
+  height: 12px;
+  background-color: var(--color-error);
+  border-radius: 50%;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Actions */
+.audio-recorder__actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.audio-recorder__info {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+/* =============================================================================
+   Layout Selector Styles
+   ============================================================================= */
+
+.layout-selector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+}
+
+.layout-selector__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.layout-selector__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+}
+
+.layout-selector__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  min-width: 60px;
+  background-color: var(--color-background);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.layout-selector__option:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  background-color: rgba(var(--color-primary-rgb, 25, 118, 210), 0.05);
+}
+
+.layout-selector__option--selected {
+  border-color: var(--color-primary);
+  background-color: rgba(var(--color-primary-rgb, 25, 118, 210), 0.1);
+}
+
+.layout-selector__option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.layout-selector__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Layout Preview Grid */
+.layout-preview {
+  width: 40px;
+  height: 40px;
+  gap: 2px;
+}
+
+.layout-preview__cell {
+  background-color: var(--color-border);
+  border-radius: 2px;
+}
+
+.layout-selector__option--selected .layout-preview__cell {
+  background-color: var(--color-primary);
+}
+
+/* =============================================================================
+   Edit Mode Settings Styles
+   ============================================================================= */
+
+.edit-mode__settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  margin-top: auto;
+}
+
+.edit-mode__settings h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.edit-mode__button--secondary {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.875rem;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.edit-mode__button--secondary:hover {
+  background-color: var(--color-border);
+}
+
+.edit-mode__button--danger {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.875rem;
+  color: white;
+  background-color: var(--color-error);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.edit-mode__button--danger:hover {
+  background-color: #d32f2f;
+}
+
+.edit-mode__confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.edit-mode__confirm p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text);
+}
+
+.edit-mode__confirm-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
